@@ -2,6 +2,7 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
+
 export async function POST(req: Request) {
   try {
     const { userId } = auth();
@@ -30,4 +31,24 @@ export async function POST(req: Request) {
     console.log("[PRODUCTS_POST]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
+}
+
+export async function GET(req: Request): Promise<NextResponse> {
+  try {
+    const { userId } = auth();
+    const products = await prismadb.product.findMany();
+
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 401 });
+    }
+
+    if (!products) {
+        return new NextResponse("No products found", { status: 404 });
+    }
+
+    return NextResponse.json(products);
+  } catch (error) {
+    console.log("[PRODUCTS_GET]", error);
+    return new NextResponse("Internal error", { status: 500 });
+    }
 }
