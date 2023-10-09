@@ -16,7 +16,6 @@ model Store {
   billboards Billboard[] @relation("StoreToBillboard")
   categories Category[]  @relation("StoreToCategory")
   brandNames BrandName[] @relation("StoreToBrandName")
-  weights    Weight[]    @relation("StoreToWeight")
   products   Product[]   @relation("StoreToProduct")
   orders     Order[]     @relation("StoreToOrder")
   createdAt  DateTime    @default(now())
@@ -49,17 +48,7 @@ model Category {
   @@index([billboardId])
 }
 
-model Weight {
-  id        String    @id @default(uuid())
-  storeId   String
-  store     Store     @relation("StoreToWeight", fields: [storeId], references: [id])
-  name      String
-  value     Decimal
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  @@index([storeId])
-}
+
 
 model BrandName {
   id        String    @id @default(uuid())
@@ -81,10 +70,9 @@ model Product {
   category    Category  @relation("CategoryToProduct", fields: [categoryId], references: [id])
   brandNameId String
   brandName   BrandName @relation(fields: [brandNameId], references: [id])
-  weightId    String
-  weight      Weight    @relation(fields: [weightId], references: [id])
   name        String
   price       Decimal
+  weight      Decimal
   isFeatured  Boolean   @default(false)
   isArchived  Boolean   @default(false)
   images      Image[]
@@ -94,7 +82,6 @@ model Product {
   @@index([storeId])
   @@index([categoryId])
   @@index([brandNameId])
-  @@index([weightId])
 }
 
 model Image {
