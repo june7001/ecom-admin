@@ -8,11 +8,111 @@ generator client {
   provider = "prisma-client-js"
 }
 
-  model Product {
-  id         String   @id @default(uuid())
+
+model Store {
+  id         String      @id @default(uuid())
   name       String
-  price      Decimal
-  description String
-  imageUrl    String
- 
+  userId     String
+  billboards Billboard[] @relation("StoreToBillboard")
+  categories Category[]  @relation("StoreToCategory")
+  brandNames BrandName[] @relation("StoreToBrandName")
+  products   Product[]   @relation("StoreToProduct")
+  orders     Order[]     @relation("StoreToOrder")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Billboard {
+  id         String     @id @default(uuid())
+  storeId    String
+  store      Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
+  label      String
+  imageUrl   String
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  @@index([storeId])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  products    Product[] @relation("CategoryToProduct")
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([storeId])
+  @@index([billboardId])
+}
+
+
+
+model BrandName {
+  id        String    @id @default(uuid())
+  storeId   String
+  store     Store     @relation("StoreToBrandName", fields: [storeId], references: [id])
+  name      String
+  value     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  @@index([storeId])
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId  String
+  category    Category  @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  brandNameId String
+  brandName   BrandName @relation(fields: [brandNameId], references: [id])
+  name        String
+  price       Decimal
+  weight      Decimal
+  isFeatured  Boolean   @default(false)
+  isArchived  Boolean   @default(false)
+  images      Image[]
+  orderItems  OrderItem[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([brandNameId])
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productId])
+}
+
+model Order {
+  id        String     @id @default(uuid())
+  storeId   String
+  store     Store      @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems OrderItem[]
+  isPaid    Boolean    @default(false)
+  phone     String     @default("")
+  address   String     @default("")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  @@index([storeId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  @@index([orderId])
+  @@index([productId])
 }
