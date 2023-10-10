@@ -2,17 +2,18 @@
 import * as Form from '@radix-ui/react-form';
 import { useState } from 'react';
 import axios from 'axios';
-import { useParams } from "next/navigation";
 
-const CategoryCreator = () => {
+interface StoreInfo {
+    storeId: string;
+}
+
+const CategoryCreator = ({storeId}: StoreInfo) => {
   const [categoryName, setCategoryName] = useState("");
-  const params = useParams();
-  const storeId = params.storeId;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(storeId)
     try {
-        console.log(storeId)
       const response = await axios.post(`/api/stores/${storeId}/category`, { 
         name: categoryName,
         storeId,

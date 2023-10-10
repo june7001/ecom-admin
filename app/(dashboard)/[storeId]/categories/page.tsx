@@ -1,12 +1,14 @@
 "use client";
 import CategoryCreator from '@/components/CategoryCreator';
+import { useParams } from "next/navigation";
 
 const Categories = () => {
-  
+    const params = useParams();
+    const storeId = params.storeId;
 
   return (
     <>
-        <CategoryCreator />
+        <CategoryCreator storeId={`${storeId}`}/>
     </>
     
   );
