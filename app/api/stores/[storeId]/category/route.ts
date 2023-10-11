@@ -10,6 +10,28 @@ const CreateCategorySchema = z.object({
   billboardId: z.string().optional(),
 });
 
+//get available categories
+export async function GET(req: Request) {
+  try {
+    const storeId = req.url.split("stores/")[1].split("/category")[0];
+
+    const categories = await prismadb.category.findMany({
+      where: {
+        storeId,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return NextResponse.json(categories);
+  } catch (err) {
+    console.log("[CATEGORY_GET]", err);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { userId } = auth();
