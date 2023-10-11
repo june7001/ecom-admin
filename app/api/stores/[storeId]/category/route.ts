@@ -102,3 +102,38 @@ export async function GET(req: NextRequest, { params }: { params: { storeId: str
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
+
+export async function deleteProductFromCategory(req: Request) {
+  try {
+    const { userId } = auth();
+    const { productId, categoryId } = await req.json();
+
+    const product = await prismadb.product.findFirst({
+      where: { id: productId },
+    });
+
+    const category = await prismadb.category.findFirst({
+      where: { id: categoryId },
+    });
+
+    if (!userId) {
+      return new NextResponse("User is unauthorized", { status: 401 });
+    }
+
+    if (!product || !category) {
+      return new NextResponse("Product or category not found", { status: 404 });
+    }
+
+    await prismadb.product.update({
+      where: { id: productId },
+      data: {
+        categoryId: "",
+      },
+    });
+
+    return new NextResponse("Product removed from category", { status: 200 });
+  } catch (error) {
+    console.error("[REMOVE_PRODUCT_FROM_CATEGORY]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
