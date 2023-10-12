@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Unauthorized: User not authenticated", { status: 401 });
     }
 
-    const storeId = req.nextUrl.searchParams.get("storeId");
+    const storeId = req.url.split("stores/")[1].split("/category")[0];
     
     // Validate storeId format
     if (!storeId || !isUuid(storeId)) {
