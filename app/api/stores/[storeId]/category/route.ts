@@ -1,7 +1,8 @@
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
+import { isUuid } from 'uuidv4';
 
 const CreateCategorySchema = z.object({
   name: z.string(),
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    console.log(parsedBody)
+    console.log(parsedBody);
     // Kontrollerar att användaren äger butiken.
     const store = await prismadb.store.findFirst({
       where: {
@@ -33,7 +34,9 @@ export async function POST(req: Request) {
     });
 
     if (!store) {
-      return new NextResponse("Unauthorized to add category to this store", { status: 403 });
+      return new NextResponse("Unauthorized to add category to this store", {
+        status: 403,
+      });
     }
 
     // Skapar kategorin
@@ -41,7 +44,7 @@ export async function POST(req: Request) {
       data: {
         name,
         storeId,
-        billboardId: billboardId ?? ""
+        billboardId: billboardId ?? "",
       },
     });
 
@@ -49,5 +52,53 @@ export async function POST(req: Request) {
   } catch (error) {
     console.log("[CATEGORY_POST]", error);
     return new NextResponse("Internal error", { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { userId } = auth();
+
+    if (!userId) {
+      return new NextResponse("Unauthorized: User not authenticated", { status: 401 });
+    }
+
+    const storeId = req.nextUrl.searchParams.get("storeId");
+    
+    // Validate storeId format
+    if (!storeId || !isUuid(storeId)) {
+      return new NextResponse("Invalid input: Store ID is missing or not a UUID", { status: 400 });
+    }
+
+    // Check if the user owns the store
+    const store = await prismadb.store.findFirst({
+      where: {
+        id: storeId,
+        userId,
+      },
+    });
+
+    if (!store) {
+      return new NextResponse(
+        "Unauthorized: User does not have access to categories for this store",
+        { status: 403 }
+      );
+    }
+
+    // Fetch all categories for the store
+    const categories = await prismadb.category.findMany({
+      where: {
+        storeId,
+      },
+    });
+
+    if (categories.length === 0) {
+      return NextResponse.json({ message: "No categories available for this store" });
+    }
+
+    return NextResponse.json(categories);
+  } catch (error) {
+    console.error("[CATEGORY_GET]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
