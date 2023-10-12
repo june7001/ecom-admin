@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: { storeId: string } }) {
   try {
     const { userId } = auth();
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Unauthorized: User not authenticated", { status: 401 });
     }
 
-    const storeId = req.url.split("stores/")[1].split("/category")[0];
+    const { storeId } = params;
     
     // Validate storeId format
     if (!storeId || !isUuid(storeId)) {
