@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import CategoryManageDropdown from "./CategoryManageDropdown";
 
 type Category = {
   id: string;
@@ -14,9 +15,15 @@ type Category = {
   createdAt: string;
 };
 
-
-const CategoryTable = ({ storeId, categories }: { storeId: string; categories: Category[] }) => {
-
+const CategoryTable = ({
+  storeId,
+  categories,
+  refreshCategories,
+}: {
+  storeId: string;
+  categories: Category[];
+  refreshCategories: () => void;
+}) => {
   return (
     <div className="mx-auto max-w-screen-lg">
       <Table className="border border-slate-200">
@@ -35,7 +42,7 @@ const CategoryTable = ({ storeId, categories }: { storeId: string; categories: C
                 {new Date(category.createdAt).toLocaleString()}
               </TableCell>
               <TableCell className="text-right">
-                {/* "Hantera" knapp här*/}
+              <CategoryManageDropdown category={category} refreshCategories={refreshCategories} />
               </TableCell>
             </TableRow>
           ))}
