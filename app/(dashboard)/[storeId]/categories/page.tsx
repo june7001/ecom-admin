@@ -20,7 +20,7 @@ const Categories = () => {
   const fetchData = async () => {
     try {
       const res = await fetch(
-        `/api/stores/${storeId}/category?storeId=${storeId}`
+        `/api/stores/${storeId}/category`
       );
       const data: Category[] = await res.json();
       setCategories(data);
