@@ -57,12 +57,6 @@ export async function POST(req: Request) {
 
 export async function GET(req: NextRequest, { params }: { params: { storeId: string } }) {
   try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return new NextResponse("Unauthorized: User not authenticated", { status: 401 });
-    }
-
     const { storeId } = params;
     
     // Validate storeId format
@@ -74,14 +68,13 @@ export async function GET(req: NextRequest, { params }: { params: { storeId: str
     const store = await prismadb.store.findFirst({
       where: {
         id: storeId,
-        userId,
       },
     });
 
     if (!store) {
       return new NextResponse(
-        "Unauthorized: User does not have access to categories for this store",
-        { status: 403 }
+        "Store not found",
+        { status: 404 }
       );
     }
 
