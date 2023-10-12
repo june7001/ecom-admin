@@ -103,7 +103,7 @@ export async function GET(req: NextRequest, { params }: { params: { storeId: str
   }
 }
 
-export async function deleteProductFromCategory(req: Request) {
+export async function PATCH(req: Request) {
   try {
     const { userId } = auth();
     const { productId, categoryId } = await req.json();
