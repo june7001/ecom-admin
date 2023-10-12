@@ -36,7 +36,7 @@ const Categories = () => {
   return (
     <>
       <CategoryCreator storeId={`${storeId}`} refreshCategories={fetchData} />
-      <CategoryTable storeId={`${storeId}`} categories={categories} />
+      <CategoryTable storeId={`${storeId}`} categories={categories} refreshCategories={fetchData}/>
     </>
   );
 };
