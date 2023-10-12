@@ -93,7 +93,7 @@ export async function GET(req: NextRequest, { params }: { params: { storeId: str
     });
 
     if (categories.length === 0) {
-      return NextResponse.json({ message: "No categories available for this store" });
+      return NextResponse.json([]);
     }
 
     return NextResponse.json(categories);
