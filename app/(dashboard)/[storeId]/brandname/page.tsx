@@ -1,14 +1,14 @@
 import prismadb from "@/lib/prismadb";
-import { BrandNameForm } from "./components/brandname-form";
+import { BrandNameForm } from "../../../../components/brandname-form";
 
 const BrandNamePage = async ({
     params
 }: {
-    params: { brandNameId: string }
+    params: { storeId: string }
 }) => {
-    const brandName = await prismadb.brandName.findUnique({
+    const brandName = await prismadb.brandName.findMany({
         where: {
-            id: params.brandNameId
+            storeId: params.storeId
         }
     })
 

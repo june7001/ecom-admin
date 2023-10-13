@@ -14,6 +14,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import axios from "axios"
+import { useParams } from "next/navigation"
+import toast from "react-hot-toast"
+
 
 const formSchema = z.object({
     brandName: z.string().min(2, {
@@ -26,21 +29,26 @@ type BrandNameFormValues = z.infer<typeof formSchema>;
 
 export const BrandNameForm: React.FC = () => {
 
+    const params = useParams();
     const title = "Create brand name";
 
     const form = useForm<BrandNameFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues:  {
+        defaultValues: {
             brandName: ""
         }
     })
 
-    const onSubmit = async() => {
+    const onSubmit = async (data: BrandNameFormValues) => {
         try {
-            (await axios.post );
-    } catch (error) {
-        console.error(error);
-    }}
+            console.log("hej", data)
+            const response = await axios.post(`/api/stores/${params.storeId}/brandname/`, data);
+            toast.success("New brand created");
+            console.log("brand created:", response.data);
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
     return (
         <>
             <div className="flex items-center justify-between">
@@ -62,7 +70,7 @@ export const BrandNameForm: React.FC = () => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Create new brand name</Button>
+                    <Button type="submit">Create</Button>
                 </form>
             </Form>
         </>
