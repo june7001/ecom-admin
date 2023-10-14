@@ -26,6 +26,35 @@ export async function GET(
       storeId,
       categoryId,
     },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      weight: true,
+      storeId: true,
+      brandName: {
+        select: {
+          id: true,
+          name: true,
+          value: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      images: {
+        select: {
+          url: true,
+        },
+      },
+      isArchived: true,
+      isFeatured: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 
   return NextResponse.json(productsByCategory);
