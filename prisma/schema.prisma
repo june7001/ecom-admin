@@ -58,7 +58,7 @@ model Product {
   brandName   BrandName @relation(fields: [brandNameId], references: [id])
   name        String
   price       Decimal
-  Amount      String
+  Amount      String    @default("1g")
   Stock       Int       @default(0)
   isFeatured  Boolean   @default(false)
   isArchived  Boolean   @default(false)
