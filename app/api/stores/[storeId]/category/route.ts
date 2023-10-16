@@ -2,12 +2,11 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
-import { isUuid } from 'uuidv4';
+import { isUuid } from "uuidv4";
 
 const CreateCategorySchema = z.object({
   name: z.string(),
   storeId: z.string(),
-  billboardId: z.string().optional(),
 });
 
 export async function POST(req: Request) {
@@ -19,7 +18,7 @@ export async function POST(req: Request) {
       return new NextResponse("Invalid input", { status: 400 });
     }
 
-    const { name, storeId, billboardId } = parsedBody.data;
+    const { name, storeId } = parsedBody.data;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -44,7 +43,6 @@ export async function POST(req: Request) {
       data: {
         name,
         storeId,
-        billboardId: billboardId ?? "",
       },
     });
 
@@ -55,13 +53,19 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: NextRequest, { params }: { params: { storeId: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { storeId: string } }
+) {
   try {
     const { storeId } = params;
-    
+
     // Validate storeId format
     if (!storeId || !isUuid(storeId)) {
-      return new NextResponse("Invalid input: Store ID is missing or not a UUID", { status: 400 });
+      return new NextResponse(
+        "Invalid input: Store ID is missing or not a UUID",
+        { status: 400 }
+      );
     }
 
     // Check if the user owns the store
@@ -72,10 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: { storeId: str
     });
 
     if (!store) {
-      return new NextResponse(
-        "Store not found",
-        { status: 404 }
-      );
+      return new NextResponse("Store not found", { status: 404 });
     }
 
     // Fetch all categories for the store

@@ -13,7 +13,6 @@ model Store {
   id         String      @id @default(uuid())
   name       String
   userId     String
-  billboards Billboard[] @relation("StoreToBillboard")
   categories Category[]  @relation("StoreToCategory")
   brandNames BrandName[] @relation("StoreToBrandName")
   products   Product[]   @relation("StoreToProduct")
@@ -22,30 +21,17 @@ model Store {
   updatedAt  DateTime    @updatedAt
 }
 
-model Billboard {
-  id         String     @id @default(uuid())
-  storeId    String
-  store      Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
-  label      String
-  imageUrl   String
-  categories Category[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  @@index([storeId])
-}
+
 
 model Category {
   id          String    @id @default(uuid())
   storeId     String
   store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
-  billboardId String
-  billboard   Billboard @relation(fields: [billboardId], references: [id])
   products    Product[] @relation("CategoryToProduct")
   name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   @@index([storeId])
-  @@index([billboardId])
 }
 
 
@@ -72,7 +58,8 @@ model Product {
   brandName   BrandName @relation(fields: [brandNameId], references: [id])
   name        String
   price       Decimal
-  weight      Decimal
+  amount      String    @default("1g")
+  stock       Int       @default(0)
   isFeatured  Boolean   @default(false)
   isArchived  Boolean   @default(false)
   images      Image[]

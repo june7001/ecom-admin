@@ -30,7 +30,7 @@ export async function GET(
       id: true,
       name: true,
       price: true,
-      weight: true,
+      amount: true,
       storeId: true,
       brandName: {
         select: {
