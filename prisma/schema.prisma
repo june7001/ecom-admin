@@ -59,7 +59,7 @@ model Product {
   name        String
   price       Decimal
   amount      String    @default("1g")
-  Stock       Int       @default(0)
+  stock       Int       @default(0)
   isFeatured  Boolean   @default(false)
   isArchived  Boolean   @default(false)
   images      Image[]
