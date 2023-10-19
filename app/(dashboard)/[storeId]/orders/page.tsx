@@ -104,6 +104,9 @@ export default function OrderPage({ params }: { params: { storeId: string } }) {
           </tbody>
         </table>
       )}
+      {orders.length === 0 && !loading ? (
+        <p className="mt-4">Ingen verkar ha lagt någon order hos dig 😢</p>
+      ) : null}
     </div>
   );
 }
