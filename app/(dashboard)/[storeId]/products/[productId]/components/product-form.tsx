@@ -40,7 +40,7 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
   amount: z.string().min(1),
-  stock: z.number().min(0),
+  stock: z.coerce.number().min(0),
   brandNameId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
