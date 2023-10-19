@@ -59,12 +59,14 @@ const CreateOrderSchema = z.object({
   storeId: z.string().min(1),
   address: z.string(),
   phone: z.string(),
-  orderItems: z.array(
-    z.object({
-      productId: z.string(),
-      quantity: z.number().min(1),
-    })
-  ),
+  orderItems: z
+    .array(
+      z.object({
+        productId: z.string(),
+        quantity: z.number().min(1),
+      })
+    )
+    .min(1),
 });
 
 export async function POST(
