@@ -127,3 +127,70 @@ export async function POST(
     return new NextResponse("Internal server error", { status: 500 });
   }
 }
+
+const UpdateOrderSchema = z.object({
+  storeId: z.string().min(1),
+  orderId: z.string().min(1),
+  isPaid: z.boolean().optional(),
+  isDelivered: z.boolean().optional(),
+});
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: { storeId: string; orderId: string } }
+) {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const schemaInput = {
+      ...params,
+      ...(await req.json()),
+    };
+
+    const validationResult = UpdateOrderSchema.safeParse(schemaInput);
+    if (!validationResult.success) {
+      return new NextResponse(validationResult.error.message, { status: 400 });
+    }
+
+    const { storeId, orderId, isDelivered, isPaid } = validationResult.data;
+
+    const store = await db.store.findUnique({ where: { id: storeId, userId } });
+    if (!store) {
+      return new NextResponse("You do not have access to this store", {
+        status: 403,
+      });
+    }
+
+    const order = await db.order.findUnique({
+      where: { id: orderId, storeId },
+    });
+    if (!order) {
+      return new NextResponse("Order not found", { status: 400 });
+    }
+
+    if (isDelivered === undefined && isPaid === undefined) {
+      return new NextResponse("Either isDelivered or isPaid is required", {
+        status: 400,
+      });
+    }
+
+    const orderUpdateResult = await db.order.update({
+      data: {
+        isDelivered,
+        isPaid,
+      },
+      where: {
+        id: orderId,
+        storeId,
+      },
+    });
+
+    return NextResponse.json(orderUpdateResult);
+  } catch (err) {
+    console.error(err);
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+}
