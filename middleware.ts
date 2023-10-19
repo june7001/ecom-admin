@@ -4,6 +4,7 @@ export default authMiddleware({
   publicRoutes: ["/api/:path*"],
   ignoredRoutes(req) {
     const isMethodGET = req.method === "GET";
+    const isMethodPOST = req.method === "POST";
     const path = req.nextUrl.pathname;
 
     //Allow GET requests to /api/stores/:path*/category
@@ -21,6 +22,16 @@ export default authMiddleware({
       path.startsWith("/api/stores/") &&
       path.includes("/category")
     ) {
+      return true;
+    }
+
+    //Allow POST requests to /api/stores/:path*/order
+    if (
+      isMethodPOST &&
+      path.startsWith("/api/stores/") &&
+      path.endsWith("/order")
+    ) {
+      //
       return true;
     }
 

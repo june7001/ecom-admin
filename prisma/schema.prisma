@@ -8,7 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model Store {
   id         String      @id @default(uuid())
   name       String
@@ -21,20 +20,17 @@ model Store {
   updatedAt  DateTime    @updatedAt
 }
 
-
-
 model Category {
-  id          String    @id @default(uuid())
-  storeId     String
-  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
-  products    Product[] @relation("CategoryToProduct")
-  name        String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String    @id @default(uuid())
+  storeId   String
+  store     Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  products  Product[] @relation("CategoryToProduct")
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
   @@index([storeId])
 }
-
-
 
 model BrandName {
   id        String    @id @default(uuid())
@@ -45,27 +41,29 @@ model BrandName {
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
   @@index([storeId])
 }
 
 model Product {
-  id          String    @id @default(uuid())
+  id          String      @id @default(uuid())
   storeId     String
-  store       Store     @relation("StoreToProduct", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToProduct", fields: [storeId], references: [id])
   categoryId  String
-  category    Category  @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  category    Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
   brandNameId String
-  brandName   BrandName @relation(fields: [brandNameId], references: [id])
+  brandName   BrandName   @relation(fields: [brandNameId], references: [id])
   name        String
   price       Decimal
-  amount      String    @default("1g")
-  stock       Int       @default(0)
-  isFeatured  Boolean   @default(false)
-  isArchived  Boolean   @default(false)
+  amount      String      @default("1g")
+  stock       Int         @default(0)
+  isFeatured  Boolean     @default(false)
+  isArchived  Boolean     @default(false)
   images      Image[]
   orderItems  OrderItem[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
   @@index([storeId])
   @@index([categoryId])
   @@index([brandNameId])
@@ -78,19 +76,22 @@ model Image {
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@index([productId])
 }
 
 model Order {
-  id        String     @id @default(uuid())
-  storeId   String
-  store     Store      @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItems OrderItem[]
-  isPaid    Boolean    @default(false)
-  phone     String     @default("")
-  address   String     @default("")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String      @id @default(uuid())
+  storeId     String
+  store       Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems  OrderItem[]
+  isPaid      Boolean     @default(false)
+  isDelivered Boolean     @default(false)
+  phone       String      @default("")
+  address     String      @default("")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
   @@index([storeId])
 }
 
@@ -100,6 +101,7 @@ model OrderItem {
   order     Order   @relation(fields: [orderId], references: [id])
   productId String
   product   Product @relation(fields: [productId], references: [id])
+
   @@index([orderId])
   @@index([productId])
 }
