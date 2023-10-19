@@ -72,6 +72,7 @@ export default function OrderPage({ params }: { params: { storeId: string } }) {
             <tr>
               <th>Id</th>
               <th>Address</th>
+              <th>Summa att betala</th>
               <th>Levererad</th>
               <th>Betald</th>
             </tr>
@@ -81,6 +82,7 @@ export default function OrderPage({ params }: { params: { storeId: string } }) {
               <tr key={order.id}>
                 <td>{order.id}</td>
                 <td>{order.address}</td>
+                <td>{order.totalPrice}kr</td>
                 <td>
                   <input
                     type="checkbox"
