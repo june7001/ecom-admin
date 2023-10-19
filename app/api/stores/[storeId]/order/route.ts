@@ -41,6 +41,11 @@ export async function GET(
             id: true,
             productId: true,
             orderId: true,
+            product: {
+              select: {
+                price: true,
+              },
+            },
           },
         },
         createdAt: true,
@@ -48,7 +53,18 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(orders);
+    // Calculate total price for each order
+    // A tad yanky, but Vercel is fast enough?
+    const ordersWithTotalPrice: typeof orders & { totalPrice: number }[] =
+      orders.map((order) => {
+        let totalPrice = 0;
+        order.orderItems.forEach((orderItem) => {
+          totalPrice += Number(orderItem.product.price);
+        });
+        return { ...order, totalPrice };
+      });
+
+    return NextResponse.json(ordersWithTotalPrice);
   } catch (err) {
     console.error(err);
     return new NextResponse("Internal server error", { status: 500 });
