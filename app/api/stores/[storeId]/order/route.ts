@@ -77,7 +77,9 @@ export async function POST(
       ...(await req.json()),
     };
 
-    const validationResult = CreateOrderSchema.safeParse(schemaInput);
+    const validationResult = await CreateOrderSchema.safeParseAsync(
+      schemaInput
+    );
     if (!validationResult.success) {
       return new NextResponse(validationResult.error.message, { status: 400 });
     }
@@ -150,7 +152,9 @@ export async function PATCH(
       ...(await req.json()),
     };
 
-    const validationResult = UpdateOrderSchema.safeParse(schemaInput);
+    const validationResult = await UpdateOrderSchema.safeParseAsync(
+      schemaInput
+    );
     if (!validationResult.success) {
       return new NextResponse(validationResult.error.message, { status: 400 });
     }
